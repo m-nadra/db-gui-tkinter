@@ -1,49 +1,22 @@
 from tkinter import *
 from tkinter import ttk
+from add import AddWindow
 import queries
 
-class Window(ttk.Frame):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.parent = parent
-        self.parent.title("School Manager")
-        self.parent.geometry("800x600")
+class MainWindow(Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("School Manager")
+        self.geometry("800x600")
 
-        self.header = Frame(self.parent)
-        self.header.pack(anchor='ne', padx=50, pady=10)
-        self.tableFrame = Frame(self.parent)
-        self.tableFrame.pack(side=TOP, fill=BOTH, expand=True, padx=50, pady=10)
+        self.header = Header(self)
+        self.table = Table(self)
+        self.options = Options(self)
 
-        ttk.Label(self.header, text='Table:').pack(side=LEFT)
-        self.combobox = ttk.Combobox(self.header, values=['Student', 'Subject'])
-        self.combobox.pack(side=RIGHT, fill=BOTH)
-        self.combobox.bind("<<ComboboxSelected>>", self.displayTable)
+        self.header.combobox.bind("<<ComboboxSelected>>", self.displayTable)
 
-        self.tree = ttk.Treeview(self.tableFrame, show='headings')
-        self.tree.pack(expand=True, fill=BOTH)
-
-        self.optionsFrame = ttk.LabelFrame(self.parent, text='Options')
-        self.optionsFrame.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
-
-        self.addButton = ttk.Button(self.optionsFrame, text='Add', command=self.add)
-        self.editButton = ttk.Button(self.optionsFrame, text='Edit', command=self.edit)
-        self.deleteButton = ttk.Button(self.optionsFrame, text='Delete', command=self.delete)
-
-        self.addButton.pack(side=LEFT, padx=10)    
-        self.editButton.pack(side=LEFT, padx=10)
-        self.deleteButton.pack(side=LEFT, padx=10)
-
-    def edit(self):
-        pass
-
-    def delete(self):
-        pass
-    
-    def add(self):
-        pass
-    
     def displayTable(self, event) -> None:
-        table = self.combobox.get()
+        table = self.header.combobox.get()
         columns = []
         match table:
             case 'Student':
@@ -54,7 +27,24 @@ class Window(ttk.Frame):
                 columns = queries.Subject.getColumnNames()
             case _:
                 return
-        self.drawTable(table, columns)
+        self.table.drawTable(table, columns)
+
+
+class Header(Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pack(anchor='ne', padx=50, pady=10)
+        ttk.Label(self, text='Table:').pack(side=LEFT)
+        self.combobox = ttk.Combobox(self, values=['Student', 'Subject'])
+        self.combobox.pack(side=RIGHT, fill=BOTH)
+
+
+class Table(Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pack(side=TOP, fill=BOTH, expand=True, padx=50, pady=10)
+        self.tree = ttk.Treeview(self, show='headings')
+        self.tree.pack(expand=True, fill=BOTH)
 
     def drawTable(self, table, columns) -> None:
         try:
@@ -62,7 +52,7 @@ class Window(ttk.Frame):
         except AttributeError:
             pass
 
-        self.tree = ttk.Treeview(self.tableFrame, columns=columns, show='headings')
+        self.tree = ttk.Treeview(self, columns=columns, show='headings')
 
         for column in columns:
             self.tree.heading(column, text=column)
@@ -72,7 +62,26 @@ class Window(ttk.Frame):
     
         self.tree.pack(expand=True, fill=BOTH)
 
+
+class Options(ttk.LabelFrame):
+    def __init__(self, parent):
+        super().__init__(parent, text='Options')
+        self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
+
+        ttk.Button(self, text='Add', command=self.add).pack(side=LEFT, padx=10)
+        ttk.Button(self, text='Edit', command=self.edit).pack(side=LEFT, padx=10)
+        ttk.Button(self, text='Delete', command=self.delete).pack(side=LEFT, padx=10)
+   
+    def add(self) -> None:
+        AddWindow()
+
+    def edit(self) -> None:
+        pass
+
+    def delete(self) -> None:
+        pass
+
+
 if __name__ == "__main__":
-    root = Tk()
-    app = Window(root)
-    root.mainloop()
+    app = MainWindow()
+    app.mainloop()
