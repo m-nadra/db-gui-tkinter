@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from add import AddWindow
 import queries
 
@@ -80,8 +81,14 @@ class Options(ttk.LabelFrame):
         pass
 
     def delete(self) -> None:
-        pass
-
+        try:
+            recordId = self.parent.table.tree.item(self.parent.table.tree.selection())['values'][0]
+        except IndexError:
+            messagebox.showerror("Error", "No record selected")
+            return
+        result = messagebox.askquestion("Confirm deletion", "Do you want to remove record?") 
+        if result == 'yes':
+            queries.Student.deleteRecord(recordId)
 
 if __name__ == "__main__":
     app = MainWindow()
