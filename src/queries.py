@@ -29,3 +29,6 @@ def addStudent(name, lastname):
     with Session(engine) as session:
         session.add(student)
         session.commit()
+
+def getTablesNames():
+    return [table.capitalize() for table in Base.metadata.tables.keys()]

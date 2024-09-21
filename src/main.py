@@ -36,7 +36,7 @@ class Header(Frame):
         super().__init__(parent)
         self.pack(anchor='ne', padx=50, pady=10)
         ttk.Label(self, text='Table:').pack(side=LEFT)
-        self.combobox = ttk.Combobox(self, values=['Student', 'Subject'])
+        self.combobox = ttk.Combobox(self, values=queries.getTablesNames())
         self.combobox.pack(side=RIGHT, fill=BOTH)
 
 
