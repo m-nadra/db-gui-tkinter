@@ -15,3 +15,9 @@ def getColumnNames(cls) -> list:
 
 Base.get = get
 Base.getColumnNames = getColumnNames
+
+def addStudent(name, lastname):
+    student = Student(name=name, lastname=lastname)
+    with Session(engine) as session:
+        session.add(student)
+        session.commit()

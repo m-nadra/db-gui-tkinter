@@ -66,6 +66,7 @@ class Table(Frame):
 class Options(ttk.LabelFrame):
     def __init__(self, parent):
         super().__init__(parent, text='Options')
+        self.parent = parent
         self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
 
         ttk.Button(self, text='Add', command=self.add).pack(side=LEFT, padx=10)
