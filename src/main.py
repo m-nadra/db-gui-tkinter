@@ -17,19 +17,17 @@ class MainWindow(Tk):
         self.header.combobox.bind("<<ComboboxSelected>>", self.displayTable)
 
     def displayTable(self, event) -> None:
-        table = self.header.combobox.get()
-        columns = []
-        match table:
-            case 'Student':
-                table = queries.Student.get()
-                columns = queries.Student.getColumnNames()
-            case 'Subject':
-                table = queries.Subject.get()
-                columns = queries.Subject.getColumnNames()
-            case _:
-                return
-        self.table.drawTable(table, columns)
+        tableName = self.header.combobox.get()
+        
+        tableClass = getattr(queries, tableName, None)
+        
+        if tableClass is None:
+            return
 
+        records = tableClass.get()
+        columns = tableClass.getColumnNames()
+        
+        self.table.drawTable(records, columns)
 
 class Header(Frame):
     def __init__(self, parent):
@@ -87,8 +85,11 @@ class Options(ttk.LabelFrame):
             messagebox.showerror("Error", "No record selected")
             return
         result = messagebox.askquestion("Confirm deletion", "Do you want to remove record?") 
-        if result == 'yes':
-            queries.Student.deleteRecord(recordId)
+        if result == 'no':
+            return
+        tableName = self.parent.header.combobox.get()
+        tableClass = getattr(queries, tableName, None)
+        tableClass.deleteRecord(recordId)
 
 if __name__ == "__main__":
     app = MainWindow()
