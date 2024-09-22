@@ -73,7 +73,7 @@ class Options(ttk.LabelFrame):
         ttk.Button(self, text='Delete', command=self.delete).pack(side=LEFT, padx=10)
    
     def add(self) -> None:
-        AddWindow()
+        AddWindow(self.parent.header.combobox.get())
 
     def edit(self) -> None:
         pass

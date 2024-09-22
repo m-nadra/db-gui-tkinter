@@ -3,6 +3,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, delete 
 
 
+def getTablesNames():
+    return [table.capitalize() for table in Base.metadata.tables.keys()]
+
 @classmethod
 def get(cls) -> list:
     query = select(cls)
@@ -20,15 +23,14 @@ def deleteRecord(cls, recordId):
         session.delete(recordToDelete)
         session.commit()
 
+@classmethod
+def addRecord(cls, **kwargs):
+    record = cls(**kwargs)
+    with Session(engine) as session:
+        session.add(record)
+        session.commit()
+
 Base.get = get
 Base.getColumnNames = getColumnNames
 Base.deleteRecord = deleteRecord
-
-def addStudent(name, lastname):
-    student = Student(name=name, lastname=lastname)
-    with Session(engine) as session:
-        session.add(student)
-        session.commit()
-
-def getTablesNames():
-    return [table.capitalize() for table in Base.metadata.tables.keys()]
+Base.addRecord = addRecord
