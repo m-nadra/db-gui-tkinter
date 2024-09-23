@@ -1,9 +1,7 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import messagebox
-from add import AddWindow
 import queries
-
+from table import TableContent, RecordManager
 
 class MainWindow(Tk):
     def __init__(self):
@@ -50,49 +48,6 @@ class Table(Frame):
             self.tree.insert('', 'end', values=[column for column in row])
 
         self.tree.pack(expand=True, fill=BOTH)
-
-
-class TableContent:
-    def __init__(self, header, table):
-        self.header = header
-        self.table = table
-
-    def updateTable(self):
-        tableName = self.header.combobox.get()
-        tableClass = getattr(queries, tableName, None)
-        
-        records = tableClass.get()
-        columns = tableClass.getColumnNames()
-
-        self.table.refreshTable(columns, records)
-
-
-class RecordManager:
-    def __init__(self, header, table):
-        self.header = header
-        self.table = table
-
-    def addRecord(self):
-        AddWindow(self.header.combobox.get())
-
-    def deleteRecord(self):
-        try:
-            recordId = self.table.tree.item(self.table.tree.selection())['values'][0]
-        except IndexError:
-            messagebox.showerror("Error", "No record selected")
-            return
-
-        result = messagebox.askquestion("Confirm deletion", "Do you want to remove the record?")
-        if result == 'no':
-            return
-
-        tableName = self.header.combobox.get()
-        tableClass = getattr(queries, tableName, None)
-        if tableClass:
-            tableClass.deleteRecord(recordId)
-
-    def editRecord(self):
-        pass
 
 
 class Options(ttk.LabelFrame):
