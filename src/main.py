@@ -14,20 +14,6 @@ class MainWindow(Tk):
         self.table = Table(self)
         self.options = Options(self)
 
-        self.header.combobox.bind("<<ComboboxSelected>>", self.displayTable)
-
-    def displayTable(self, event) -> None:
-        tableName = self.header.combobox.get()
-        
-        tableClass = getattr(queries, tableName, None)
-        
-        if tableClass is None:
-            return
-
-        records = tableClass.get()
-        columns = tableClass.getColumnNames()
-        
-        self.table.drawTable(records, columns)
 
 class Header(Frame):
     def __init__(self, parent):
@@ -36,6 +22,7 @@ class Header(Frame):
         ttk.Label(self, text='Table:').pack(side=LEFT)
         self.combobox = ttk.Combobox(self, values=queries.getTablesNames())
         self.combobox.pack(side=RIGHT, fill=BOTH)
+        self.combobox.bind("<<ComboboxSelected>>", lambda _: parent.table.drawTable(self.combobox.get()))
 
 
 class Table(Frame):
@@ -45,18 +32,26 @@ class Table(Frame):
         self.tree = ttk.Treeview(self, show='headings')
         self.tree.pack(expand=True, fill=BOTH)
 
-    def drawTable(self, table, columns) -> None:
+    def drawTable(self, tableName) -> None:
         try:
             self.tree.destroy()
         except AttributeError:
             pass
+        
+        tableClass = getattr(queries, tableName, None)
+        
+        if tableClass is None:
+            return
+
+        records = tableClass.get()
+        columns = tableClass.getColumnNames()
 
         self.tree = ttk.Treeview(self, columns=columns, show='headings')
 
         for column in columns:
             self.tree.heading(column, text=column)
         
-        for row in table:
+        for row in records:
             self.tree.insert('', 'end', values=[column for column in row])
     
         self.tree.pack(expand=True, fill=BOTH)
@@ -90,6 +85,7 @@ class Options(ttk.LabelFrame):
         tableName = self.parent.header.combobox.get()
         tableClass = getattr(queries, tableName, None)
         tableClass.deleteRecord(recordId)
+
 
 if __name__ == "__main__":
     app = MainWindow()
