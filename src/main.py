@@ -4,6 +4,7 @@ from tkinter import messagebox
 from add import AddWindow
 import queries
 
+
 class MainWindow(Tk):
     def __init__(self):
         super().__init__()
@@ -12,7 +13,9 @@ class MainWindow(Tk):
 
         self.header = Header(self)
         self.table = Table(self)
-        self.options = Options(self)
+        self.tableContent = TableContent(self.header, self.table)
+        self.recordManager = RecordManager(self.header, self.table)
+        self.options = Options(self, self.tableContent, self.recordManager)
 
 
 class Header(Frame):
@@ -22,7 +25,7 @@ class Header(Frame):
         ttk.Label(self, text='Table:').pack(side=LEFT)
         self.combobox = ttk.Combobox(self, values=queries.getTablesNames())
         self.combobox.pack(side=RIGHT, fill=BOTH)
-        self.combobox.bind("<<ComboboxSelected>>", lambda _: parent.table.drawTable(self.combobox.get()))
+        self.combobox.bind("<<ComboboxSelected>>", lambda _: parent.tableContent.updateTable())
 
 
 class Table(Frame):
@@ -32,59 +35,76 @@ class Table(Frame):
         self.tree = ttk.Treeview(self, show='headings')
         self.tree.pack(expand=True, fill=BOTH)
 
-    def drawTable(self, tableName) -> None:
+    def refreshTable(self, columns, records):
         try:
             self.tree.destroy()
         except AttributeError:
             pass
-        
-        tableClass = getattr(queries, tableName, None)
-        
-        if tableClass is None:
-            return
-
-        records = tableClass.get()
-        columns = tableClass.getColumnNames()
 
         self.tree = ttk.Treeview(self, columns=columns, show='headings')
 
         for column in columns:
             self.tree.heading(column, text=column)
-        
+
         for row in records:
             self.tree.insert('', 'end', values=[column for column in row])
-    
+
         self.tree.pack(expand=True, fill=BOTH)
 
 
-class Options(ttk.LabelFrame):
-    def __init__(self, parent):
-        super().__init__(parent, text='Options')
-        self.parent = parent
-        self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
+class TableContent:
+    def __init__(self, header, table):
+        self.header = header
+        self.table = table
 
-        ttk.Button(self, text='Add', command=self.add).pack(side=LEFT, padx=10)
-        ttk.Button(self, text='Edit', command=self.edit).pack(side=LEFT, padx=10)
-        ttk.Button(self, text='Delete', command=self.delete).pack(side=LEFT, padx=10)
-   
-    def add(self) -> None:
-        AddWindow(self.parent.header.combobox.get())
+    def updateTable(self):
+        tableName = self.header.combobox.get()
+        tableClass = getattr(queries, tableName, None)
+        
+        records = tableClass.get()
+        columns = tableClass.getColumnNames()
 
-    def edit(self) -> None:
-        pass
+        self.table.refreshTable(columns, records)
 
-    def delete(self) -> None:
+
+class RecordManager:
+    def __init__(self, header, table):
+        self.header = header
+        self.table = table
+
+    def addRecord(self):
+        AddWindow(self.header.combobox.get())
+
+    def deleteRecord(self):
         try:
-            recordId = self.parent.table.tree.item(self.parent.table.tree.selection())['values'][0]
+            recordId = self.table.tree.item(self.table.tree.selection())['values'][0]
         except IndexError:
             messagebox.showerror("Error", "No record selected")
             return
-        result = messagebox.askquestion("Confirm deletion", "Do you want to remove record?") 
+
+        result = messagebox.askquestion("Confirm deletion", "Do you want to remove the record?")
         if result == 'no':
             return
-        tableName = self.parent.header.combobox.get()
+
+        tableName = self.header.combobox.get()
         tableClass = getattr(queries, tableName, None)
-        tableClass.deleteRecord(recordId)
+        if tableClass:
+            tableClass.deleteRecord(recordId)
+
+    def editRecord(self):
+        pass
+
+
+class Options(ttk.LabelFrame):
+    def __init__(self, parent, tableContent, recordManager):
+        super().__init__(parent, text='Options')
+        self.tableContent = tableContent
+        self.recordManager = recordManager
+        self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
+
+        ttk.Button(self, text='Add', command=self.recordManager.addRecord).pack(side=LEFT, padx=10)
+        ttk.Button(self, text='Edit', command=self.recordManager.editRecord).pack(side=LEFT, padx=10)
+        ttk.Button(self, text='Delete', command=self.recordManager.deleteRecord).pack(side=LEFT, padx=10)
 
 
 if __name__ == "__main__":
