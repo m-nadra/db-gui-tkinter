@@ -2,6 +2,7 @@ from tkinter import messagebox
 from windows import AddWindow
 import queries
 
+
 class TableContent:
     def __init__(self, table):
         self.frame = table
@@ -22,7 +23,7 @@ class TableContent:
             self.tree.delete(col)
 
         self.tree["columns"] = self.columns
-        
+
         for column in self.columns:
             self.tree.heading(column, text=column)
             self.tree.column(column, width=100)
@@ -41,15 +42,17 @@ class RecordManager:
         addWindow = AddWindow(tableName)
         self.frame.wait_window(addWindow)
         self.table.updateTable(tableName)
-        
+
     def deleteRecord(self):
         try:
-            recordId = self.table.tree.item(self.table.tree.selection())['values'][0]
+            recordId = self.table.tree.item(
+                self.table.tree.selection())['values'][0]
         except IndexError:
             messagebox.showerror("Error", "No record selected")
             return
 
-        result = messagebox.askquestion("Confirm deletion", "Do you want to remove the record?")
+        result = messagebox.askquestion(
+            "Confirm deletion", "Do you want to remove the record?")
         if result == 'no':
             return
 
