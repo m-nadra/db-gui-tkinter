@@ -12,7 +12,7 @@ class MainWindow(Tk):
         self.header = Header(self)
         self.table = Table(self)
         self.tableContent = TableContent(self.table)
-        self.recordManager = RecordManager(self.header, self.tableContent)
+        self.recordManager = RecordManager(self.tableContent)
         self.options = Options(self, self.recordManager)
 
 

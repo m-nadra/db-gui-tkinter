@@ -4,39 +4,42 @@ import queries
 
 class TableContent:
     def __init__(self, table):
+        self.frame = table
         self.tree = table.tree
+        self.tableName = ""
+        self.columns = []
+        self.rows = []
 
     def updateTable(self, tableName):
+        self.tableName = tableName
         tableClass = getattr(queries, tableName, None)
-        
-        records = tableClass.get()
-        columns = tableClass.getColumnNames()
+        self.records = tableClass.get()
+        self.columns = tableClass.getColumnNames()
+        self.refreshTable()
 
-        self.refreshTable(columns, records)
-
-    def refreshTable(self, columns, records):
+    def refreshTable(self):
         for col in self.tree.get_children():
             self.tree.delete(col)
 
-        self.tree["columns"] = columns
+        self.tree["columns"] = self.columns
         
-        for column in columns:
+        for column in self.columns:
             self.tree.heading(column, text=column)
             self.tree.column(column, width=100)
 
-        for row in records:
+        for row in self.records:
             self.tree.insert('', 'end', values=[column for column in row])
 
 
 class RecordManager:
-    def __init__(self, header, table):
-        self.header = header
+    def __init__(self, table):
         self.table = table
+        self.frame = self.table.frame
 
     def addRecord(self):
-        tableName = self.header.combobox.get()
+        tableName = self.table.tableName
         addWindow = AddWindow(tableName)
-        self.header.wait_window(addWindow)
+        self.frame.wait_window(addWindow)
         self.table.updateTable(tableName)
         
     def deleteRecord(self):
@@ -50,7 +53,7 @@ class RecordManager:
         if result == 'no':
             return
 
-        tableName = self.header.combobox.get()
+        tableName = self.table.tableName
         tableClass = getattr(queries, tableName, None)
         if tableClass:
             tableClass.deleteRecord(recordId)
