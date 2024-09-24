@@ -3,12 +3,10 @@ from windows import AddWindow
 import queries
 
 class TableContent:
-    def __init__(self, header, table):
-        self.header = header
+    def __init__(self, table):
         self.tree = table.tree
 
-    def updateTable(self):
-        tableName = self.header.combobox.get()
+    def updateTable(self, tableName):
         tableClass = getattr(queries, tableName, None)
         
         records = tableClass.get()
@@ -36,9 +34,10 @@ class RecordManager:
         self.table = table
 
     def addRecord(self):
-        addWindow = AddWindow(self.header.combobox.get())
+        tableName = self.header.combobox.get()
+        addWindow = AddWindow(tableName)
         self.header.wait_window(addWindow)
-        self.table.updateTable()
+        self.table.updateTable(tableName)
         
     def deleteRecord(self):
         try:
@@ -56,7 +55,7 @@ class RecordManager:
         if tableClass:
             tableClass.deleteRecord(recordId)
 
-        self.table.updateTable()
+        self.table.updateTable(tableName)
 
     def editRecord(self):
         pass

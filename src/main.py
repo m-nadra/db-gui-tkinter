@@ -11,7 +11,7 @@ class MainWindow(Tk):
 
         self.header = Header(self)
         self.table = Table(self)
-        self.tableContent = TableContent(self.header, self.table)
+        self.tableContent = TableContent(self.table)
         self.recordManager = RecordManager(self.header, self.tableContent)
         self.options = Options(self, self.recordManager)
 
@@ -24,7 +24,7 @@ class Header(Frame):
         ttk.Label(self, text='Table:').pack(side=LEFT)
         self.combobox = ttk.Combobox(self, values=queries.getTablesNames())
         self.combobox.pack(side=RIGHT, fill=BOTH)
-        self.combobox.bind("<<ComboboxSelected>>", lambda _: parent.tableContent.updateTable())
+        self.combobox.bind("<<ComboboxSelected>>", lambda _: parent.tableContent.updateTable(self.combobox.get()))
 
 
 class Table(Frame):
@@ -40,11 +40,10 @@ class Options(ttk.LabelFrame):
     def __init__(self, parent, recordManager):
         super().__init__(parent, text='Options')
         self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
-        self.recordManager = recordManager
-
-        ttk.Button(self, text='Add', command=self.recordManager.addRecord).pack(side=LEFT, padx=10)
-        ttk.Button(self, text='Edit', command=self.recordManager.editRecord).pack(side=LEFT, padx=10)
-        ttk.Button(self, text='Delete', command=self.recordManager.deleteRecord).pack(side=LEFT, padx=10)
+        
+        ttk.Button(self, text='Add', command=recordManager.addRecord).pack(side=LEFT, padx=10)
+        ttk.Button(self, text='Edit', command=recordManager.editRecord).pack(side=LEFT, padx=10)
+        ttk.Button(self, text='Delete', command=recordManager.deleteRecord).pack(side=LEFT, padx=10)
 
 
 if __name__ == "__main__":
