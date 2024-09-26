@@ -12,11 +12,20 @@ class MainWindow(Tk):
 
         self.header = Header(self)
         self.table = Table(self)
+        self.options = Options(self)
         self.tableContent = TableContent(self.table)
         self.recordManager = RecordManager(self.tableContent)
         self.tableSelector = TableSelector(
             self.header.combobox, self.tableContent)
-        self.options = Options(self, self.recordManager)
+
+    def addRecord(self):
+        self.recordManager.addRecord()
+
+    def editRecord(self):
+        self.recordManager.editRecord()
+
+    def deleteRecord(self):
+        self.recordManager.deleteRecord()
 
 
 class Header(Frame):
@@ -39,15 +48,15 @@ class Table(Frame):
 
 
 class Options(ttk.LabelFrame):
-    def __init__(self, parent, recordManager):
+    def __init__(self, parent):
         super().__init__(parent, text='Options')
         self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
 
-        ttk.Button(self, text='Add', command=recordManager.addRecord).pack(
+        ttk.Button(self, text='Add', command=parent.addRecord).pack(
             side=LEFT, padx=10)
-        ttk.Button(self, text='Edit', command=recordManager.editRecord).pack(
+        ttk.Button(self, text='Edit', command=parent.editRecord).pack(
             side=LEFT, padx=10)
-        ttk.Button(self, text='Delete', command=recordManager.deleteRecord).pack(
+        ttk.Button(self, text='Delete', command=parent.deleteRecord).pack(
             side=LEFT, padx=10)
 
 
