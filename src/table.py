@@ -33,6 +33,7 @@ class TableContent:
 class TableSelector:
     def __init__(self, combobox, tableContent):
         self.combobox = combobox
+        self.combobox['values'] = queries.getTablesNames()
         self.tableContent = tableContent
         self.combobox.bind("<<ComboboxSelected>>",
                            lambda _: self.tableContent.updateTable(self.combobox.get()))

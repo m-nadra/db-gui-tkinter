@@ -1,6 +1,5 @@
 from tkinter import Tk, Frame, LEFT, TOP, RIGHT, BOTTOM, BOTH
 from tkinter import ttk
-import queries
 from table import TableContent, TableSelector
 from records_operations import AddRecord, EditRecord, DeleteRecord
 
@@ -11,12 +10,30 @@ class MainWindow(Tk):
         self.title("School Manager")
         self.geometry("800x600")
 
-        self.header = Header(self)
-        self.table = Table(self)
-        self.options = Options(self)
-        self.tableContent = TableContent(self.table)
-        self.tableSelector = TableSelector(
-            self.header.combobox, self.tableContent)
+        self.layout = MainWindowLayout(self)
+        header, table, options = self.layout.getComponents()
+
+        self.logic = MainWindowLogic(header, table)
+
+        options.addButton['command'] = self.logic.addRecord
+        options.editButton['command'] = self.logic.editRecord
+        options.deleteButton['command'] = self.logic.deleteRecord
+
+
+class MainWindowLayout:
+    def __init__(self, root):
+        self.header = Header(root)
+        self.table = Table(root)
+        self.options = Options(root)
+
+    def getComponents(self):
+        return self.header, self.table, self.options
+
+
+class MainWindowLogic:
+    def __init__(self, header, table):
+        self.tableContent = TableContent(table)
+        self.tableSelector = TableSelector(header.combobox, self.tableContent)
 
     def addRecord(self):
         AddRecord(self.tableContent).execute()
@@ -34,7 +51,7 @@ class Header(Frame):
         self.pack(anchor='ne', padx=50, pady=10)
 
         ttk.Label(self, text='Table:').pack(side=LEFT)
-        self.combobox = ttk.Combobox(self, values=queries.getTablesNames())
+        self.combobox = ttk.Combobox(self)
         self.combobox.pack(side=RIGHT, fill=BOTH)
 
 
@@ -52,12 +69,12 @@ class Options(ttk.LabelFrame):
         super().__init__(parent, text='Options')
         self.pack(side=BOTTOM, padx=50, pady=50, ipady=10)
 
-        ttk.Button(self, text='Add', command=parent.addRecord).pack(
-            side=LEFT, padx=10)
-        ttk.Button(self, text='Edit', command=parent.editRecord).pack(
-            side=LEFT, padx=10)
-        ttk.Button(self, text='Delete', command=parent.deleteRecord).pack(
-            side=LEFT, padx=10)
+        self.addButton = ttk.Button(self, text='Add')
+        self.addButton.pack(side=LEFT, padx=10)
+        self.editButton = ttk.Button(self, text='Edit')
+        self.editButton.pack(side=LEFT, padx=10)
+        self.deleteButton = ttk.Button(self, text='Delete')
+        self.deleteButton.pack(side=LEFT, padx=10)
 
 
 if __name__ == "__main__":
