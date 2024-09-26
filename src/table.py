@@ -65,3 +65,11 @@ class RecordManager:
 
     def editRecord(self):
         pass
+
+
+class TableSelector:
+    def __init__(self, combobox, tableContent):
+        self.combobox = combobox
+        self.tableContent = tableContent
+        self.combobox.bind("<<ComboboxSelected>>",
+                           lambda _: self.tableContent.updateTable(self.combobox.get()))

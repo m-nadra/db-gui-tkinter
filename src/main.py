@@ -1,7 +1,7 @@
 from tkinter import Tk, Frame, LEFT, TOP, RIGHT, BOTTOM, BOTH
 from tkinter import ttk
 import queries
-from table import TableContent, RecordManager
+from table import TableContent, RecordManager, TableSelector
 
 
 class MainWindow(Tk):
@@ -14,6 +14,8 @@ class MainWindow(Tk):
         self.table = Table(self)
         self.tableContent = TableContent(self.table)
         self.recordManager = RecordManager(self.tableContent)
+        self.tableSelector = TableSelector(
+            self.header.combobox, self.tableContent)
         self.options = Options(self, self.recordManager)
 
 
@@ -25,8 +27,6 @@ class Header(Frame):
         ttk.Label(self, text='Table:').pack(side=LEFT)
         self.combobox = ttk.Combobox(self, values=queries.getTablesNames())
         self.combobox.pack(side=RIGHT, fill=BOTH)
-        self.combobox.bind(
-            "<<ComboboxSelected>>", lambda _: parent.tableContent.updateTable(self.combobox.get()))
 
 
 class Table(Frame):
