@@ -1,5 +1,3 @@
-from tkinter import messagebox
-from windows import AddWindow
 import queries
 
 
@@ -30,41 +28,6 @@ class TableContent:
 
         for row in self.records:
             self.tree.insert('', 'end', values=[column for column in row])
-
-
-class RecordManager:
-    def __init__(self, table):
-        self.table = table
-        self.frame = self.table.frame
-
-    def addRecord(self):
-        tableName = self.table.tableName
-        addWindow = AddWindow(tableName)
-        self.frame.wait_window(addWindow)
-        self.table.updateTable(tableName)
-
-    def deleteRecord(self):
-        try:
-            recordId = self.table.tree.item(
-                self.table.tree.selection())['values'][0]
-        except IndexError:
-            messagebox.showerror("Error", "No record selected")
-            return
-
-        result = messagebox.askquestion(
-            "Confirm deletion", "Do you want to remove the record?")
-        if result == 'no':
-            return
-
-        tableName = self.table.tableName
-        tableClass = getattr(queries, tableName, None)
-        if tableClass:
-            tableClass.deleteRecord(recordId)
-
-        self.table.updateTable(tableName)
-
-    def editRecord(self):
-        pass
 
 
 class TableSelector:

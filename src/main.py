@@ -1,7 +1,8 @@
 from tkinter import Tk, Frame, LEFT, TOP, RIGHT, BOTTOM, BOTH
 from tkinter import ttk
 import queries
-from table import TableContent, RecordManager, TableSelector
+from table import TableContent, TableSelector
+from records_operations import AddRecord, EditRecord, DeleteRecord
 
 
 class MainWindow(Tk):
@@ -14,18 +15,17 @@ class MainWindow(Tk):
         self.table = Table(self)
         self.options = Options(self)
         self.tableContent = TableContent(self.table)
-        self.recordManager = RecordManager(self.tableContent)
         self.tableSelector = TableSelector(
             self.header.combobox, self.tableContent)
 
     def addRecord(self):
-        self.recordManager.addRecord()
+        AddRecord(self.tableContent).execute()
 
     def editRecord(self):
-        self.recordManager.editRecord()
+        EditRecord(self.tableContent).execute()
 
     def deleteRecord(self):
-        self.recordManager.deleteRecord()
+        DeleteRecord(self.tableContent).execute()
 
 
 class Header(Frame):
