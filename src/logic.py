@@ -1,6 +1,6 @@
 """This module contains the classes to manipulate data in widgets."""
 
-from windows import AddWindow
+from windows import AddWindow, EditWindow
 from tkinter import messagebox
 import queries
 
@@ -22,12 +22,16 @@ class MainWindowLogic:
         self.tableContent.updateTable(tableName)
 
     def editRecord(self):
-        pass
+        tableName = self.tableContent.getTableName()
+        recordId = self.tableContent.getSelectedRecordId()
+        addWindow = EditWindow(tableName, recordId)
+        self.tableFrame.wait_window(addWindow)
+        self.tableContent.updateTable(tableName)
 
     def deleteRecord(self) -> None:
         """Delete the selected record. After deleting the record, update the table widget."""
         try:
-            recordId = self.tableContent.getSelectedRecord()
+            recordId = self.tableContent.getSelectedRecordId()
         except IndexError:
             messagebox.showerror("Error", "No record selected")
             return
@@ -78,7 +82,7 @@ class TableContent:
         """Return the name of the dispaled table."""
         return self.tableName
 
-    def getSelectedRecord(self) -> int:
+    def getSelectedRecordId(self) -> int:
         """Return the id of the selected record"""
         return self.tableWidget.item(self.tableWidget.selection())['values'][0]
 

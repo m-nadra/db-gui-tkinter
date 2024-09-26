@@ -19,6 +19,14 @@ def getRows(cls) -> list:
 
 
 @classmethod
+def getRecord(cls, recordId: int) -> list:
+    """Return all the records of the table."""
+    query = select(cls).where(cls.id == recordId)
+    with engine.connect() as conn:
+        return list(conn.execute(query).one())
+
+
+@classmethod
 def getColumnNames(cls) -> list:
     """Return the names of the columns of the table."""
     return cls.__table__.columns.keys()
@@ -42,7 +50,19 @@ def addRecord(cls, **kwargs: dict) -> None:
         session.commit()
 
 
+@classmethod
+def updateRecord(cls, recordId: int, **kwargs: dict) -> None:
+    """Update the record with the given id."""
+    with Session(engine) as session:
+        recordToUpdate = session.get(cls, recordId)
+        for key, value in kwargs.items():
+            setattr(recordToUpdate, key, value)
+        session.commit()
+
+
 Base.getRows = getRows
+Base.getRecord = getRecord
 Base.getColumnNames = getColumnNames
 Base.deleteRecord = deleteRecord
 Base.addRecord = addRecord
+Base.updateRecord = updateRecord
