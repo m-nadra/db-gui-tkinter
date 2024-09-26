@@ -1,4 +1,20 @@
 import queries
+from records_operations import AddRecord, EditRecord, DeleteRecord
+
+
+class MainWindowLogic:
+    def __init__(self, header, table):
+        self.tableContent = TableContent(table)
+        self.tableSelector = TableSelector(header.combobox, self.tableContent)
+
+    def addRecord(self):
+        AddRecord(self.tableContent).execute()
+
+    def editRecord(self):
+        EditRecord(self.tableContent).execute()
+
+    def deleteRecord(self):
+        DeleteRecord(self.tableContent).execute()
 
 
 class TableContent:
