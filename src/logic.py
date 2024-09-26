@@ -56,7 +56,7 @@ class TableContent:
         """Update object attributes and refresh the table widget."""
         self.tableName = tableName
         tableClass = getattr(queries, tableName, None)
-        self.rows = tableClass.get()
+        self.rows = tableClass.getRows()
         self.columnNames = tableClass.getColumnNames()
         self.refreshTable()
 
