@@ -1,26 +1,47 @@
 import queries
-from records_operations import AddRecord, EditRecord, DeleteRecord
+from windows import AddWindow
+from tkinter import messagebox
 
 
 class MainWindowLogic:
     def __init__(self, header, table):
-        self.tableContent = TableContent(table)
+        self.tableFrame = table
+        self.tableContent = TableContent(table.tree)
         self.tableSelector = TableSelector(header.combobox, self.tableContent)
 
     def addRecord(self):
-        AddRecord(self.tableContent).execute()
+        tableName = self.tableContent.tableName
+        addWindow = AddWindow(tableName)
+        self.tableFrame.wait_window(addWindow)
+        self.tableContent.updateTable(tableName)
 
     def editRecord(self):
-        EditRecord(self.tableContent).execute()
+        pass
 
     def deleteRecord(self):
-        DeleteRecord(self.tableContent).execute()
+        try:
+            recordId = self.tableContent.tree.item(
+                self.tableContent.tree.selection())['values'][0]
+        except IndexError:
+            messagebox.showerror("Error", "No record selected")
+            return
+
+        result = messagebox.askquestion(
+            "Confirm deletion", "Do you want to remove the record?")
+        if result == 'no':
+            return
+
+        tableName = self.tableContent.tableName
+        tableClass = getattr(queries, tableName, None)
+        if tableClass:
+            tableClass.deleteRecord(recordId)
+
+        self.tableContent.updateTable(tableName)
 
 
 class TableContent:
-    def __init__(self, table):
-        self.frame = table
-        self.tree = table.tree
+    def __init__(self, tree):
+        self.tree = tree
         self.tableName = ""
         self.columns = []
         self.rows = []
@@ -50,6 +71,5 @@ class TableSelector:
     def __init__(self, combobox, tableContent):
         self.combobox = combobox
         self.combobox['values'] = queries.getTablesNames()
-        self.tableContent = tableContent
         self.combobox.bind("<<ComboboxSelected>>",
-                           lambda _: self.tableContent.updateTable(self.combobox.get()))
+                           lambda _: tableContent.updateTable(self.combobox.get()))

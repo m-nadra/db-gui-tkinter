@@ -1,6 +1,7 @@
-from tkinter import *
+from tkinter import Toplevel
 from tkinter import ttk
 import queries
+
 
 class AddWindow(Toplevel):
     def __init__(self, tableName):
@@ -12,7 +13,7 @@ class AddWindow(Toplevel):
         self.columns = getattr(queries, tableName).getColumnNames()[1:]
         self.entries = {}
         self.generateForm()
-        
+
     def generateForm(self):
         for column in self.columns:
             ttk.Label(self, text=f'{column}:').pack()
