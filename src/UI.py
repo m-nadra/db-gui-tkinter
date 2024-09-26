@@ -4,6 +4,8 @@ from tkinter import ttk
 
 class MainWindowLayout:
     def __init__(self, root):
+        root.title("School Manager")
+        root.geometry("800x600")
         self.header = Header(root)
         self.table = Table(root)
         self.options = Options(root)

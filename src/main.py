@@ -1,17 +1,17 @@
+"""This module is the entry point of the application. It creates the main window and connects the logic and layout."""
+
 from tkinter import Tk
 from UI import MainWindowLayout
 from logic import MainWindowLogic
 
 
 class MainWindow(Tk):
+    """This class is an connection between the layout and the logic of the main window."""
+
     def __init__(self):
         super().__init__()
-        self.title("School Manager")
-        self.geometry("800x600")
-
         self.layout = MainWindowLayout(self)
         header, table, options = self.layout.getComponents()
-
         self.logic = MainWindowLogic(header, table)
 
         options.addButton['command'] = self.logic.addRecord
