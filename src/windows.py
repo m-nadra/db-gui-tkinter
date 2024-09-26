@@ -45,10 +45,7 @@ class EditWindow(Toplevel):
         self.columns = getattr(queries, tableName).getColumnNames()[1:]
         self.entries = {}
         self.recordId = recordId
-        try:
-            self.recordData = getattr(queries, tableName).getRecord(recordId)
-        except IndexError:
-            self.destroy()
+        self.recordData = getattr(queries, tableName).getRecord(recordId)
         self.generateForm()
 
     def generateForm(self) -> None:

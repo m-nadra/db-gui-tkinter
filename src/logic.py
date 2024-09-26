@@ -16,14 +16,25 @@ class MainWindowLogic:
 
     def addRecord(self) -> None:
         """Create a window with form to add a record. After adding the record, update the table widget."""
-        tableName = self.tableContent.getTableName()
+        try:
+            tableName = self.tableContent.getTableName()
+        except AttributeError:
+            messagebox.showerror("Error", "No table selected")
+            return
         addWindow = AddWindow(tableName)
         self.tableFrame.wait_window(addWindow)
         self.tableContent.updateTable(tableName)
 
     def editRecord(self):
-        tableName = self.tableContent.getTableName()
-        recordId = self.tableContent.getSelectedRecordId()
+        try:
+            tableName = self.tableContent.getTableName()
+            recordId = self.tableContent.getSelectedRecordId()
+        except IndexError:
+            messagebox.showerror("Error", "No record selected")
+            return
+        except AttributeError:
+            messagebox.showerror("Error", "No table selected")
+            return
         addWindow = EditWindow(tableName, recordId)
         self.tableFrame.wait_window(addWindow)
         self.tableContent.updateTable(tableName)
