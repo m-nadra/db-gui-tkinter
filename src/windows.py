@@ -2,7 +2,7 @@
 
 from tkinter import Toplevel
 from tkinter import ttk
-import queries
+import db.queries as queries
 
 
 class AddWindow(Toplevel):

@@ -2,7 +2,7 @@
 
 from windows import AddWindow, EditWindow
 from tkinter import messagebox
-import queries
+import db.queries as queries
 
 
 class MainWindowLogic:

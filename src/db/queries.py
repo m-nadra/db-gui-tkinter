@@ -1,6 +1,6 @@
 """This module contains the queries that are used to interact with the database."""
 
-from models import engine, Base, Student, Subject
+from db.models import Base, engine, Student, Subject
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
