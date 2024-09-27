@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "postgres"
-version = "0.1.0"
-description = ""
+version = "1.0.0"
+description = "SQLAlchemy GUI interface for PostgreSQL"
 authors = ["Mikołaj Nadra <m.nadra@proton.me>"]
 readme = "README.md"
 
